@@ -1,6 +1,5 @@
 #include <linux/cdev.h>
 #include <linux/kernel.h>
-#include <linux/init.h>
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/slab.h>
@@ -11,13 +10,11 @@ MODULE_DESCRIPTION("A demonstration character device driver");
 MODULE_VERSION("0.1.0");
 
 static int majorNumber;
-static dev_t deviceNumber;
 static struct class *deviceClass = NULL;
 static struct device *fibonacciDevice = NULL;
 
 #define MAX_LENGTH 22 // Length of 18446744073709551615, plus 1 for null and 1 for newline
 static char *messageBuffer;
-static char simpleMessage[] = "Hello, character device world!";
 static int currentNumber = 1;
 static int previousNumber = 0;
 
@@ -35,14 +32,11 @@ static ssize_t fib_read(struct file* filep, char __user *buffer, size_t length, 
     // Copy our messageBuffer out to userland.
     int copyResult;
     copyResult = copy_to_user(buffer, messageBuffer, MAX_LENGTH);
-    //copyResult = copy_to_user(buffer, simpleMessage, strlen(simpleMessage));
     
 
     if (0 == copyResult)
     {
         printk(KERN_INFO "Read successfully. %s\n", messageBuffer);
-        //*offset += strlen(simpleMessage);
-        //return strlen(simpleMessage);
         *offset += MAX_LENGTH;
         return MAX_LENGTH;
     }
@@ -54,13 +48,13 @@ static ssize_t fib_read(struct file* filep, char __user *buffer, size_t length, 
 static ssize_t fib_write(struct file *filp, const char __user *foo, size_t bar, loff_t *baz)
 {
     printk(KERN_INFO "Fibonacci: write()\n");
-    // TODO
     return 0;
 }
 
 static int fib_open(struct inode *i, struct file *filp)
 {
     printk(KERN_INFO "Fibonacci: open()\n");
+
     // Print the current number into the messageBuffer
     snprintf(messageBuffer, MAX_LENGTH, "%d\n", currentNumber);
 
