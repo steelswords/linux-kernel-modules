@@ -2,6 +2,7 @@
 CR_C := arm-linux-gnueabihf-
 MODULES := /home/tristan/Repos/raspberrypi-linux/
 obj-m += helloworld.o
+obj-m += fibonacci.o
 
 all:
 	make ARCH=arm CROSS_COMPILE=$(CR_C) -C $(MODULES) M=$(shell pwd) modules
